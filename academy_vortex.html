@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sinter | Vortex Academy</title>
+    <style>
+        :root { --bg: #050505; --cyan: #00ffff; --magenta: #ff00ff; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--cyan); font-family: monospace; overflow: hidden; display: flex; flex-direction: column; }
+        header { padding: 15px; border-bottom: 1px solid var(--cyan); background: rgba(0, 255, 255, 0.1); font-weight: bold; }
+        #sim-view { position: relative; flex: 1; background: #000; overflow: hidden; }
+        #canvas { width: 100%; height: 100%; }
+        #output { position: absolute; bottom: 0; left: 0; width: 100%; height: 35%; background: rgba(0,0,0,0.8); overflow-y: auto; padding: 15px; font-size: 0.8rem; box-sizing: border-box; border-top: 1px solid var(--cyan); }
+        .input-area { padding: 10px; background: #000; display: flex; gap: 8px; border-top: 1px solid var(--cyan); }
+        input { flex: 1; background: #111; border: 1px solid var(--cyan); color: var(--cyan); padding: 12px; font-family: inherit; outline: none; }
+        button { background: var(--cyan); color: #000; border: none; padding: 0 15px; font-weight: bold; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+    <header>VORTEX_ACADEMY [LUNAR_SYNC]</header>
+    <div id="sim-view"><canvas id="canvas"></canvas></div>
+    <div id="output"><div>⌬ daleth: Ready. Type 'deploy' to begin.</div></div>
+    <div class="input-area">
+        <input type="text" id="cmd" placeholder="Intent..." autocomplete="off">
+        <button id="run-btn">Run</button>
+    </div>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const out = document.getElementById('output');
+        const cmd = document.getElementById('cmd');
+        const btn = document.getElementById('run-btn');
+        let w, h, particles = [], phase = 0;
+
+        function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+
+        function log(m, c='') { out.innerHTML += `<div style="color:${c}">> ${m}</div>`; out.scrollTop = out.scrollHeight; }
+
+        function start() {
+            if(phase > 0) return; phase = 1;
+            log("INITIATING LUNAR SEED...", "#fff");
+            setTimeout(() => { 
+                log("SPIDERS RELEASED. WEAVING...", "#00ffff");
+                for(let i=0; i<150; i++) particles.push({x: w/2, y: h/3, tx: Math.random()*w, ty: Math.random()*h, vx:0, vy:0});
+                phase = 2;
+            }, 1000);
+        }
+
+        btn.addEventListener('click', () => {
+            const v = cmd.value.toLowerCase();
+            log(cmd.value);
+            if(v.includes('deploy') || v.includes('lunar') || v.includes('seed')) start();
+            else log("Resonance stable. Waiting for deployment intent.", "#ff00ff");
+            cmd.value = '';
+        });
+
+        function anim() {
+            ctx.fillStyle = '#000'; ctx.fillRect(0,0,w,h);
+            if(phase === 2) {
+                particles.forEach(p => {
+                    p.x += (p.tx - p.x) * 0.05; p.y += (p.ty - p.y) * 0.05;
+                    ctx.fillStyle = '#00ffff'; ctx.fillRect(p.x, p.y, 2, 2);
+                });
+            }
+            requestAnimationFrame(anim);
+        }
+        anim();
+    </script>
+</body>
+</html>
